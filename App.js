@@ -37,6 +37,12 @@ import RateUsScreen from './More/RateUsScreen';
 import BonusScreen from './More/BonusScreen';
 import LogoutScreen from './More/SettingScreen/LogoutScreen';
 
+import Dashboard from './Admin/Dashboard';
+import Customer from './Admin/Dashboard/Customer';
+import BankList from './Admin/Dashboard/BankList';
+import Report from './Admin/Dashboard/Report';
+import Transactions from './Admin/Dashboard/Transactions';
+
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -80,6 +86,13 @@ export default function App() {
         <Stack.Screen name='BonusScreen' component={BonusScreen} />
         <Stack.Screen name='LogoutScreen' component={LogoutScreen} />
         <Stack.Screen name='CustomerService' component={CustomerService} />
+
+        <Stack.Screen name='Dashboard' component={Dashboard} />
+        <Stack.Screen name='Customer' component={Customer} />
+        <Stack.Screen name='BankList' component={BankList} />
+        <Stack.Screen name='Report' component={Report} />
+        <Stack.Screen name='Transactions' component={Transactions} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

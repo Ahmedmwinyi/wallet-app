@@ -1,37 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 const HomeScreen = ({ navigation }) => {
   const [key, setKey] = useState('');
   const [balance, setBalance] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [totalAmountSent, setTotalAmountSent] = useState(0);
-  
-  useEffect(() => {
-    
-    fetchBalance();
-    fetchTransactions();
-  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchBalance();
+      fetchTransactions();
+    }, [])
+  );
 
   const fetchBalance = async () => {
     try {
-      // Retrieve the authentication key from AsyncStorage
       const sessionKey = await AsyncStorage.getItem('sessionKey');
       if (!sessionKey) {
         throw new Error('Authentication key not found');
       }
-
-
-      // Make the request with the retrieved authentication key
       const response = await axios.get('http://192.168.43.254:8088/wallet/balance', {
-        params: {
-          key: sessionKey,
-        },
+        params: { key: sessionKey },
       });
       setBalance(response.data);
     } catch (error) {
@@ -57,7 +54,7 @@ const HomeScreen = ({ navigation }) => {
           endDate
         },
       });
-      console.log(response.data); // Log the transactions data
+      console.log(response.data);
       setTransactions(response.data);
 
       const sentTransactions = response.data.filter(transaction => transaction.type === 'Bill Payment');
@@ -69,43 +66,40 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
-
   return (
     <View style={styles.container}>
-        {/* Header */}
-        <LinearGradient colors={[COLORS.primary, COLORS.secondary]} style={styles.header}>
-          <Text style={styles.currencyText}>TZS</Text>
+      {/* Header */}
+      <LinearGradient colors={[COLORS.primary, COLORS.secondary]} style={styles.header}>
+        <Text style={styles.currencyText}>TZS</Text>
         <TouchableOpacity>
           <Text style={styles.balanceText}>{balance !== null ? ` ${balance.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}` : 'Loading...'}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.balanceButton} onPress={() => alert('Balance details')}>
           <Text style={styles.balanceButtonText}>Balances</Text>
         </TouchableOpacity>
-        </LinearGradient>
+      </LinearGradient>
 
+      {/* Area Box */}
+      <View style={styles.areaBox}>
+        {/* <TouchableOpacity style={styles.areaButton} onPress={() => navigation.navigate('ScanPay')}>
+          <Ionicons name="scan-outline" size={24} color={COLORS.primary} />
+          <Text style={styles.areaButtonText}>Scan/Pay</Text>
+        </TouchableOpacity> */}
+        <TouchableOpacity style={styles.areaButton} onPress={() => navigation.navigate('Payment')}>
+          <Ionicons name="wallet-outline" size={24} color={COLORS.primary} />
+          <Text style={styles.areaButtonText}>Bills</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.areaButton} onPress={() => navigation.navigate('Withdrawal')}>
+          <Ionicons name="cash-outline" size={24} color={COLORS.primary} />
+          <Text style={styles.areaButtonText}>Withdrawal</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.areaButton} onPress={() => navigation.navigate('Transfer')}>
+          <Ionicons name="swap-horizontal-outline" size={24} color={COLORS.primary} />
+          <Text style={styles.areaButtonText}>Transfer</Text>
+        </TouchableOpacity>
+      </View>
 
-          {/* Area Box */}
-          <View style={styles.areaBox}>
-            <TouchableOpacity style={styles.areaButton} onPress={() => navigation.navigate('ScanPay')}>
-              <Ionicons name="scan-outline" size={24} color={COLORS.primary} />
-              <Text style={styles.areaButtonText}>Scan/Pay</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.areaButton} onPress={() => navigation.navigate('Payment')}>
-              <Ionicons name="wallet-outline" size={24} color={COLORS.primary} />
-              <Text style={styles.areaButtonText}>Bills</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.areaButton} onPress={() => navigation.navigate('Withdrawal')}>
-
-              <Ionicons name="cash-outline" size={24} color={COLORS.primary} />
-              <Text style={styles.areaButtonText}>Withdrawal</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.areaButton} onPress={() => navigation.navigate('Transfer')}>
-              <Ionicons name="swap-horizontal-outline" size={24} color={COLORS.primary} />
-              <Text style={styles.areaButtonText}>Transfer</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Footer */}
+      {/* Footer */}
       <View style={styles.footer}>
         <View style={styles.summaryCard}>
           <Text style={styles.summaryTitle}>Monthly Total Bills</Text>
@@ -114,7 +108,7 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.summaryCard}>
           <Text style={styles.summaryTitle}>Recent Activity</Text>
           <FlatList
-            data={transactions.slice(-3)} // Show the last three transactions
+            data={transactions.slice(-3)}
             keyExtractor={(item, index) => (item.id ? item.id.toString() : index.toString())}
             renderItem={({ item }) => (
               <View style={styles.transaction}>
@@ -124,9 +118,9 @@ const HomeScreen = ({ navigation }) => {
                     style={[
                       styles.transactionAmount,
                       item.type === 'Transfer' ? styles.transferAmount :
-                        item.type === 'Beneficiary Transaction' ? styles.transferAmount :
-                          item.type === 'Bill Payment' ? styles.transferAmount :
-                            item.type === 'E-Wallet Transaction' ? styles.receivedAmount : styles.receivedAmount,
+                      item.type === 'Beneficiary Transaction' ? styles.transferAmount :
+                      item.type === 'Bill Payment' ? styles.transferAmount :
+                      item.type === 'E-Wallet Transaction' ? styles.receivedAmount : styles.receivedAmount,
                     ]}
                   >
                     {item.amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
@@ -142,6 +136,7 @@ const HomeScreen = ({ navigation }) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

@@ -8,6 +8,7 @@ import axios from 'axios';
 const Login = ({ navigation }) => {
     const [mobileNumber, setMobileNumber] = useState('');
     const [password, setPassword] = useState('');
+    const [role, setRole] = useState('Customer'); // State to track role
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSignIn = async () => {
@@ -38,6 +39,43 @@ const Login = ({ navigation }) => {
         }
     };
 
+    const handleAdminSignIn = async () => {
+        try {
+            const response = await axios.post('http://192.168.43.254:8088/admin/login', {
+                mobileNumber: mobileNumber,
+                password: password,
+                role: "Admin"
+            });
+
+            const sessionKey = response.data.key;
+
+            // Store each piece of user data separately in AsyncStorage
+            await AsyncStorage.multiSet([
+                ['sessionKey', sessionKey],
+                ['mobileNumber', mobileNumber],
+                ['password', password],
+                ['role', "Customer"]
+            ]);
+
+            Alert.alert('Login Successful', 'You have successfully logged in as an System Admin!');
+
+            // Navigate to the next screen if login is successful
+            navigation.navigate('Dashboard'); // Assuming you have a Home screen
+        } catch (error) {
+            Alert.alert('Login Failed', 'Invalid credentials or an error occurred.');
+            console.error(error);
+        }
+    };
+
+    const handleLogin = async () => {
+        setIsLoading(true);
+        if (role === 'Customer') {
+            await handleSignIn();
+        } else if (role === 'Admin') {
+            await handleAdminSignIn();
+        }
+        setIsLoading(false);
+    };
 
     return (
         <View style={styles.container}>
@@ -60,11 +98,25 @@ const Login = ({ navigation }) => {
                     value={password}
                     onChangeText={setPassword}
                 />
+                <View style={styles.roleSelection}>
+                    <TouchableOpacity
+                        style={[styles.roleButton, role === 'Customer' && styles.selectedRoleButton]}
+                        onPress={() => setRole('Customer')}
+                    >
+                        <Text style={styles.roleButtonText}>Customer</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.roleButton, role === 'Admin' && styles.selectedRoleButton]}
+                        onPress={() => setRole('Admin')}
+                    >
+                        <Text style={styles.roleButtonText}>Admin</Text>
+                    </TouchableOpacity>
+                </View>
                 {isLoading ? (
                     <ActivityIndicator size="large" color={COLORS.primary} />
                 ) : (
                     <Button
-                        onPress={handleSignIn}
+                        onPress={handleLogin}
                         title="Log In"
                         filled
                         style={styles.button}
@@ -72,7 +124,7 @@ const Login = ({ navigation }) => {
                 )}
                 <Button
                     title="Sign Up"
-                    onPress={() => navigation.navigate("BottomTab")}
+                    onPress={() => navigation.navigate("Dashboard")}
                     style={styles.button}
                 />
             </View>
@@ -131,6 +183,24 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#fff',
         fontWeight: 'bold',
+    },
+    roleSelection: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginBottom: 20,
+    },
+    roleButton: {
+        padding: 10,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: COLORS.primary,
+        marginHorizontal: 10,
+    },
+    selectedRoleButton: {
+        backgroundColor: COLORS.primary,
+    },
+    roleButtonText: {
+        color: COLORS.primary,
     },
 });
 
