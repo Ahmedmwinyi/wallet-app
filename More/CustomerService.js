@@ -52,7 +52,6 @@ const CustomerService = () => {
 
     const handleSubmit = () => {
         if (validateFields()) {
-            // Submit data to the server
             Alert.alert('Success', 'Your issue has been submitted successfully');
             // Reset form fields
             setSelectedIssue('');

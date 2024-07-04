@@ -1,39 +1,69 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Feather } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileScreen = () => {
     const navigation = useNavigation();
-    const profileData = {
-        name: "John",
-        surname: "Doe",
-        birthDate: "1990-01-01",
-        email: "john.doe@example.com",
-        phoneNumber: "+123456789",
-        country: "USA",
-        state: "Zanzibar",
-        city: "New York",
-        buildingName: "123 Main St",
-        streetName: "Springfield, IL"
-    };
+    const [profileData, setProfileData] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('http://192.168.43.254:8088/customer/view', {
+                    params: {
+                        key: '',
+                        mobileNumber: ''
+                    }
+                });
+                setProfileData(response.data);
+            } catch (error) {
+                setError(error);
+                Alert.alert('Error', 'Failed to fetch profile data');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    
+
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={COLORS.primary} />
+            </View>
+        );
+    }
+
+    
 
     return (
         <ScrollView style={styles.container}>
             <View style={styles.header}>
                 <Feather name="user" size={50} color={COLORS.gray} />
             </View>
-            <Text style={styles.username}>{profileData.name} {profileData.surname}</Text>
+            <Text style={styles.username}>{profileData.firstName} {profileData.lastName}</Text>
             <View style={styles.mobileNumber}>
                 <Text>{profileData.phoneNumber}</Text>
             </View>
 
             <View style={styles.section}>
                 <TouchableOpacity style={styles.option}>
-                    <Text style={styles.label}>Birth Date:</Text>
-                    <Text style={styles.value}>{profileData.birthDate}</Text>
+                    <Text style={styles.label}>First Name:</Text>
+                    <Text style={styles.value}>{profileData.firstName}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.option}>
+                    <Text style={styles.label}>Last Name:</Text>
+                    <Text style={styles.value}>{profileData.lastName}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.option}>
                     <Text style={styles.label}>Email:</Text>
@@ -128,6 +158,20 @@ const styles = StyleSheet.create({
     value: {
         fontSize: 16,
         color: COLORS.brown,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    errorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 16,
     },
 });
 

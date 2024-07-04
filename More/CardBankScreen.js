@@ -49,7 +49,6 @@ const CardBankScreen = () => {
 
   const handleSubmit = () => {
     if (validateFields()) {
-      // Submit data to the server
       Alert.alert('Success', 'Bank details saved successfully');
     }
   };

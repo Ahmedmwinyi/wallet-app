@@ -22,7 +22,6 @@ const Transfer = ({navigation}) => {
             const password = await AsyncStorage.getItem('password');
             const role = await AsyncStorage.getItem('role');
 
-            // Log retrieved values for debugging
             console.log('sessionKey:', sessionKey);
             console.log('mobileNumber:', mobileNumber);
             console.log('password:', password);
@@ -53,12 +52,12 @@ const Transfer = ({navigation}) => {
 
                 const data = await response.json();
                 if (response.ok) {
-                    // Handle successful response
+                    
                     console.log('Transfer successful', data);
                     Alert.alert('Transfer Successful', 'Funds transferred successfully.');
                     setModalVisible(false);
                 } else {
-                    // Handle non-OK response
+                    
                     console.error('Transfer failed', data);
                     Alert.alert('Transfer Failed', 'Unable to transfer funds. Please try again later.');
                 }

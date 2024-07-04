@@ -15,7 +15,7 @@ const WalletTransfer = ({ onTransfer, navigation }) => {
 
     const transferFunds = async () => {
         try {
-            // Assuming you have stored the sessionKey, mobileNumber, password, and role in AsyncStorage
+            //stored the sessionKey, mobileNumber, password, and role in AsyncStorage
             const sessionKey = await AsyncStorage.getItem('sessionKey');
             const mobileNumber = await AsyncStorage.getItem('mobileNumber');
             const password = await AsyncStorage.getItem('password');

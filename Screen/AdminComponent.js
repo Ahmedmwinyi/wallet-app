@@ -43,19 +43,19 @@ const AdminComponent = () => {
     };
 
     const viewTransactionByDate = () => {
-        // Implement viewTransactionByDate functionality
+        
     };
 
     const viewAllTransactionsByCustomerByDate = () => {
-        // Implement viewAllTransactionsByCustomerByDate functionality
+        
     };
 
     const viewAllTransactionsByCustomer = () => {
-        // Implement viewAllTransactionsByCustomer functionality
+       
     };
 
     const viewAllTransactions = () => {
-        // Implement viewAllTransactions functionality
+    
     };
 
     return (

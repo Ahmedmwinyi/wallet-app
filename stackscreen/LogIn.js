@@ -8,7 +8,7 @@ import axios from 'axios';
 const Login = ({ navigation }) => {
     const [mobileNumber, setMobileNumber] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('Customer'); // State to track role
+    const [role, setRole] = useState('Customer');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSignIn = async () => {
@@ -21,7 +21,7 @@ const Login = ({ navigation }) => {
 
             const sessionKey = response.data.key;
 
-            // Store each piece of user data separately in AsyncStorage
+            // Store user data separately in AsyncStorage
             await AsyncStorage.multiSet([
                 ['sessionKey', sessionKey],
                 ['mobileNumber', mobileNumber],
@@ -31,8 +31,7 @@ const Login = ({ navigation }) => {
 
             Alert.alert('Login Successful', 'You have successfully logged in!');
 
-            // Navigate to the next screen if login is successful
-            navigation.navigate('BottomTab'); // Assuming you have a Home screen
+            navigation.navigate('BottomTab');
         } catch (error) {
             Alert.alert('Login Failed', 'Invalid credentials or an error occurred.');
             console.error(error);
@@ -49,7 +48,6 @@ const Login = ({ navigation }) => {
 
             const sessionKey = response.data.key;
 
-            // Store each piece of user data separately in AsyncStorage
             await AsyncStorage.multiSet([
                 ['sessionKey', sessionKey],
                 ['mobileNumber', mobileNumber],
@@ -59,8 +57,7 @@ const Login = ({ navigation }) => {
 
             Alert.alert('Login Successful', 'You have successfully logged in as an System Admin!');
 
-            // Navigate to the next screen if login is successful
-            navigation.navigate('Dashboard'); // Assuming you have a Home screen
+            navigation.navigate('Dashboard');
         } catch (error) {
             Alert.alert('Login Failed', 'Invalid credentials or an error occurred.');
             console.error(error);

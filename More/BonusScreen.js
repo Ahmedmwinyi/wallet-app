@@ -1,18 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for the bonus icon
-import { COLORS } from '../constants/theme'; // Import your theme colors
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS } from '../constants/theme';
 
 const BonusScreen = () => {
-    // Dummy data for bonus offers
+    // data for bonus offers
     const bonusOffers = [
         { id: '1', title: 'Welcome Bonus', description: 'Get a bonus when you sign up!' },
         { id: '2', title: 'Refer a Friend', description: 'Refer a friend and earn bonus points!' },
         { id: '3', title: 'Daily Check-in', description: 'Check in daily to receive bonus rewards!' },
-        // Add more bonus offers as needed
     ];
 
-    // Function to render each bonus offer item
     const renderBonusItem = ({ item }) => (
         <View style={styles.bonusItem}>
             <Ionicons name="gift" size={30} color={COLORS.primary} style={styles.icon} />

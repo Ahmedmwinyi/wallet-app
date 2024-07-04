@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for the star icon
-import { COLORS } from '../constants/theme'; // Import your theme colors
+import { Ionicons } from '@expo/vector-icons'; 
+import { COLORS } from '../constants/theme';
 
 const RateUsScreen = () => {
     // Function to open the app store for rating
     const openAppStore = () => {
-        // Replace 'your_app_id' with the actual ID of your app on the app store
-        const appStoreUrl = 'https://apps.apple.com/app/your_app_id'; // Example for iOS
+       
+        const appStoreUrl = 'https://apps.apple.com/app/your_app_id';
         Linking.openURL(appStoreUrl);
     };
 

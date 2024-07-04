@@ -3,7 +3,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from '../Screen/Home';
 import More from '../Screen/More';
-import { Ionicons } from '@expo/vector-icons'; // Or any other icon library
+import { Ionicons } from '@expo/vector-icons';
 import History from '../Screen/History';
 
 const Tab = createBottomTabNavigator();
@@ -32,7 +32,6 @@ const App = () => {
                             iconName = 'menu';
                         }
 
-                        // You can return any component that you like here!
                         return <Ionicons name={iconName} size={size} color={color} />;
                     },
                 })}

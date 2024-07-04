@@ -57,7 +57,7 @@ export default function History() {
 
   const onRefresh = async () => {
   setRefreshing(true);
-  await fetchTransactions(); // Call your fetchTransactions function or any other data fetching logic
+  await fetchTransactions();
   setRefreshing(false);
 };
 
@@ -97,7 +97,7 @@ export default function History() {
             if (item.id !== undefined) {
               return String(item.id);
             } else {
-              return String(index); // Use index as fallback if id is missing
+              return String(index);
             }
           }}
           showsVerticalScrollIndicator={false}
@@ -179,8 +179,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 20,
     borderBottomWidth: 2,
-    borderBottomColor: '#964B00', // Example brown color
-    backgroundColor: "#fff", // Example gray color
+    borderBottomColor: '#964B00',
+    backgroundColor: "#fff",
     justifyContent: "space-between",
     paddingStart: 18,
     paddingEnd: 18,

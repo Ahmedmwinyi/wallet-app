@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal, ScrollView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for the header icon
-import { COLORS } from '../constants/theme'; // Import your theme colors
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS } from '../constants/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const Withdrawal = () => {
@@ -9,7 +9,7 @@ const Withdrawal = () => {
     const [withdrawalAmount, setWithdrawalAmount] = useState('');
 
     const handleWithdraw = () => {
-        // Add your withdrawal logic here
+        // withdrawal logic here
         console.log(`Withdraw ${withdrawalAmount} to registered mobile number.`);
         setModalVisible(false);
     };

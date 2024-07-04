@@ -1,15 +1,64 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Alert } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for the header icon
-import { COLORS } from '../constants/theme'; // Import your theme colors
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS } from '../constants/theme';
 import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Button from '../stackscreen/Button';
 
 const ScanPay = () => {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
     const [scanResult, setScanResult] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
+    const [amount, setAmount] = useState('');
+    const [receiver, setReceiver] = useState('');
+
+    const payBill = async () => {
+        const sessionKey = await AsyncStorage.getItem('sessionKey');
+        const url = 'http://192.168.43.254:8088/bill/payment?key=';
+        const key = sessionKey;
+
+        const billData = {
+            consumerNo: 'XXXYYZ',
+            billType: 'Bill Payment',
+            amount: parseFloat(amount),
+            receiver: scanResult,
+            paymentDateTime: new Date().toISOString(),
+        };
+
+        try {
+            const response = await fetch(url + key, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(billData),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to pay bill');
+            }
+
+            const responseData = await response.json();
+      
+            console.log('Bill paid successfully:', responseData);
+
+            
+            Alert.alert('Success', 'Bill paid successfully', [
+                {
+                    text: 'OK',
+                    onPress: () => setModalVisible(false), 
+                },
+            ]);
+        } catch (error) {
+            console.error('Error paying bill:', error.message);
+            
+            Alert.alert('Error', 'Failed to pay bill');
+            console.log(billData)
+        }
+    };
 
     useEffect(() => {
         (async () => {
@@ -18,7 +67,7 @@ const ScanPay = () => {
         })();
     }, []);
 
-    const handleBarCodeScanned = ({ type, data }) => {
+    const handleBarCodeScanned = ({ data }) => {
         setScanned(true);
         setScanResult(data);
         setModalVisible(true);
@@ -76,13 +125,26 @@ const ScanPay = () => {
                             <Text style={styles.closeText}>Close</Text>
                         </TouchableOpacity>
                         <Text style={styles.scanResultText}>Scan Result:</Text>
-                        <Text style={styles.scanResult}>{scanResult}</Text>
-                        <TouchableOpacity
+                        {/* <Text style={styles.scanResult}>{scanResult}</Text> */}
+                        <TextInput 
+                            style={styles.scanResult}
+                            value={receiver} 
+                            onChangeText={setReceiver}
+                            placeholder={scanResult}
+                        />
+                        <TextInput
+                            style={styles.amountInput}
+                            placeholder="Enter amount"
+                            keyboardType="numeric"
+                            value={amount}
+                            onChangeText={setAmount}
+                        />
+                        <Button
                             style={styles.payButton}
-                            onPress={() => { /* Add your payment logic here */ }}
-                        >
-                            <Text style={styles.payButtonText}>Pay</Text>
-                        </TouchableOpacity>
+                            onPress={payBill}
+                            title="Pay"
+                            filled
+                        />
                     </View>
                 </View>
             </Modal>
@@ -130,8 +192,11 @@ const styles = StyleSheet.create({
     },
     scannerContainer: {
         flex: 1,
+        width: '60%',
+        left: 70,
         justifyContent: 'center',
         alignItems: 'center',
+        position: 'relative',
     },
     rescanButton: {
         backgroundColor: COLORS.primary,
@@ -161,7 +226,7 @@ const styles = StyleSheet.create({
     },
     closeText: {
         fontSize: 18,
-        color: 'red',
+        color: COLORS.red,
         textAlign: 'right',
         marginBottom: 20,
     },
@@ -169,23 +234,33 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 10,
+        color: COLORS.brown
     },
     scanResult: {
         fontSize: 16,
         color: COLORS.brown,
         marginBottom: 20,
     },
-    payButton: {
-        marginTop: 20,
-        padding: 15,
-        backgroundColor: '#4CAF50',
-        borderRadius: 5,
-        alignItems: 'center',
+    amountInput: {
+        height: 50,
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        paddingHorizontal: 15,
+        fontSize: 16,
+        marginBottom: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 5,
     },
-    payButtonText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
+    payButton: {
+        height: 50,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 10,
+        marginBottom: 20,
     },
 });
 

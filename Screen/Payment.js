@@ -1,77 +1,115 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal, ScrollView, FlatList } from 'react-native';
-import { Ionicons, FontAwesome } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
 import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const bills = [
-    { id: '1', name: 'Electricity', icon: 'bulb' },
-    { id: '2', name: 'Water', icon: 'water' },
-    { id: '3', name: 'Internet', icon: 'wifi' },
-    { id: '4', name: 'Cable TV', icon: 'tv' },
-    { id: '5', name: 'Gas', icon: 'flame' },
-    { id: '6', name: 'Rent', icon: 'home' },
-    { id: '7', name: 'Phone', icon: 'call' },
-    { id: '8', name: 'Insurance', icon: 'shield' },
-    { id: '9', name: 'Credit Card', icon: 'card' },
-    { id: '10', name: 'Loan', icon: 'cash' },
-    { id: '11', name: 'Education', icon: 'school' },
-    { id: '12', name: 'Medical', icon: 'medkit' },
-    { id: '13', name: 'Entertainment', icon: 'musical-notes' },
-    { id: '14', name: 'Shopping', icon: 'cart' },
-    { id: '15', name: 'Travel', icon: 'airplane' },
-    { id: '16', name: 'Food', icon: 'restaurant' },
-    { id: '17', name: 'Subscriptions', icon: 'newspaper' },
-    { id: '18', name: 'Charity', icon: 'heart' },
-    { id: '19', name: 'Taxes', icon: 'calculator' },
-    { id: '20', name: 'Miscellaneous', icon: 'options' },
+    { id: '1', name: 'Electricity', icon: 'bulb', billNumber: 'ELEC1234', consumer: 'ZECO' },
+    { id: '2', name: 'Water', icon: 'water', billNumber: 'WATR1234', consumer: 'ZAWA' },
+    { id: '3', name: 'Internet', icon: 'wifi', billNumber: 'NET1234', consumer: 'Zanlink' },
+    { id: '4', name: 'Cable TV', icon: 'tv', billNumber: 'TV1234', consumer: 'Zanzibar Cable' },
+    { id: '5', name: 'Gas', icon: 'flame', billNumber: 'GAS1234', consumer: 'ORYX Gas' },
+    { id: '6', name: 'Rent', icon: 'home', billNumber: 'RENT1234', consumer: 'Mall' },
+    { id: '7', name: 'Phone', icon: 'call', billNumber: 'PHN1234', consumer: 'Zantel' },
+    { id: '8', name: 'Insurance', icon: 'shield', billNumber: 'INS1234', consumer: 'ZIC' },
+    { id: '9', name: 'Credit Card', icon: 'card', billNumber: 'CARD1234', consumer: 'MasterCard' },
+    { id: '10', name: 'Loan', icon: 'cash', billNumber: 'LOAN1234', consumer: 'ZHELB' },
+    { id: '11', name: 'Education', icon: 'school', billNumber: 'EDU1234', consumer: 'SUZA' },
+    { id: '12', name: 'Medical', icon: 'medkit', billNumber: 'MED1234', consumer: 'Mnazi Mmoja Hospital' },
+    { id: '13', name: 'Entertainment', icon: 'musical-notes', billNumber: 'ENT1234', consumer: 'Kariakoo' },
+    { id: '14', name: 'Shopping', icon: 'cart', billNumber: 'SHOP1234', consumer: 'Michenzani Mall' },
+    { id: '15', name: 'Travel', icon: 'airplane', billNumber: 'TRVL1234', consumer: 'Azam Marine' },
+    { id: '16', name: 'Food', icon: 'restaurant', billNumber: 'FOOD1234', consumer: 'ZFDA' },
+    { id: '17', name: 'Subscriptions', icon: 'newspaper', billNumber: 'SUBS1234', consumer: 'NetFlix' },
+    { id: '18', name: 'Charity', icon: 'heart', billNumber: 'CHAR1234', consumer: 'Watoto Yatima' },
+    { id: '19', name: 'Taxes', icon: 'calculator', billNumber: 'TAX1234', consumer: 'ZRA' },
+    { id: '20', name: 'Miscellaneous', icon: 'options', billNumber: 'MISC1234', consumer: 'Other' },
 ];
 
 const Payment = () => {
     const [selectedBill, setSelectedBill] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
+    const [consumerNo, setConsumerNo] = useState('');
+    const [billType, setBillType] = useState('');
+    const [amount, setAmount] = useState('');
+    const [receiver, setReceiver] = useState('');
 
-    const renderForm = () => {
-        switch (selectedBill) {
-            case 'Electricity':
-                return (
-                    <View>
-                        <TextInput style={styles.input} placeholder="Electricity Account Number" />
-                        <TextInput style={styles.input} placeholder="Amount" keyboardType="numeric" />
-                    </View>
-                );
-            case 'Water':
-                return (
-                    <View>
-                        <TextInput style={styles.input} placeholder="Water Account Number" />
-                        <TextInput style={styles.input} placeholder="Amount" keyboardType="numeric" />
-                    </View>
-                );
-            case 'Internet':
-                return (
-                    <View>
-                        <TextInput style={styles.input} placeholder="Internet Account Number" />
-                        <TextInput style={styles.input} placeholder="Amount" keyboardType="numeric" />
-                    </View>
-                );
-            case 'Cable TV':
-                return (
-                    <View>
-                        <TextInput style={styles.input} placeholder="Cable TV Account Number" />
-                        <TextInput style={styles.input} placeholder="Amount" keyboardType="numeric" />
-                    </View>
-                );
-            // Add more cases for other bill types
-            default:
-                return null;
+    const payBill = async () => {
+        const sessionKey = await AsyncStorage.getItem('sessionKey');
+        const url = 'http://192.168.43.254:8088/bill/payment?key=';
+        const key = sessionKey; // Replace with your actual key
+
+        const billData = {
+            consumerNo,
+            billType,
+            amount: parseFloat(amount),
+            receiver,
+            paymentDateTime: new Date().toISOString(), // Or format as per your backend requirements
+        };
+
+        try {
+            const response = await fetch(url + key, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(billData),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to pay bill');
+            }
+
+            // Handle success, e.g., show confirmation message or navigate to a success screen
+            console.log('Bill paid successfully');
+        } catch (error) {
+            console.error('Error paying bill:', error.message);
+            // Handle error, e.g., show error message to user
+        } finally {
+            setModalVisible(false); // Close modal regardless of success or failure
         }
     };
+
+    const renderForm = () => (
+        <View>
+            <TextInput
+                style={styles.input}
+                placeholder="Consumer Number"
+                value={consumerNo}
+                onChangeText={setConsumerNo}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Bill Type"
+                value={billType}
+                onChangeText={setBillType}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Amount"
+                keyboardType="numeric"
+                value={amount}
+                onChangeText={setAmount}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Receiver"
+                value={receiver}
+                onChangeText={setReceiver}
+            />
+        </View>
+    );
 
     const renderBillOption = ({ item }) => (
         <TouchableOpacity
             style={styles.billOption}
             onPress={() => {
                 setSelectedBill(item.name);
+                setBillType(item.name);
+                setConsumerNo(item.billNumber);
+                setReceiver(item.consumer)
                 setModalVisible(true);
             }}
         >
@@ -117,7 +155,7 @@ const Payment = () => {
                                 <Text style={styles.closeText}>Close</Text>
                             </TouchableOpacity>
                             {renderForm()}
-                            <TouchableOpacity style={styles.submitButton} onPress={() => { /* Add your payment logic here */ }}>
+                            <TouchableOpacity style={styles.submitButton} onPress={payBill}>
                                 <Text style={styles.submitButtonText}>Pay</Text>
                             </TouchableOpacity>
                         </ScrollView>
@@ -195,6 +233,12 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 5,
         backgroundColor: '#fff',
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 1,
     },
     modalBackground: {
         flex: 1,
@@ -202,7 +246,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.5)',
     },
     modalContainer: {
-        backgroundColor: '#fff',
+        backgroundColor: '#f5f5f5',
         padding: 20,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,

@@ -81,10 +81,10 @@ const HomeScreen = ({ navigation }) => {
 
       {/* Area Box */}
       <View style={styles.areaBox}>
-        {/* <TouchableOpacity style={styles.areaButton} onPress={() => navigation.navigate('ScanPay')}>
+        <TouchableOpacity style={styles.areaButton} onPress={() => navigation.navigate('ScanPay')}>
           <Ionicons name="scan-outline" size={24} color={COLORS.primary} />
           <Text style={styles.areaButtonText}>Scan/Pay</Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
         <TouchableOpacity style={styles.areaButton} onPress={() => navigation.navigate('Payment')}>
           <Ionicons name="wallet-outline" size={24} color={COLORS.primary} />
           <Text style={styles.areaButtonText}>Bills</Text>
@@ -120,7 +120,7 @@ const HomeScreen = ({ navigation }) => {
                       item.type === 'Transfer' ? styles.transferAmount :
                       item.type === 'Beneficiary Transaction' ? styles.transferAmount :
                       item.type === 'Bill Payment' ? styles.transferAmount :
-                      item.type === 'E-Wallet Transaction' ? styles.receivedAmount : styles.receivedAmount,
+                      item.type === 'E-Wallet Transaction' ? styles.receivedAmount : styles.transferAmount,
                     ]}
                   >
                     {item.amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     color: '#3ecc71',
   },
   transferAmount: {
-    color: COLORS.red, // Blue for transfers (example)
+    color: COLORS.red,
   },
   quickActions: {
     flexDirection: 'row',
