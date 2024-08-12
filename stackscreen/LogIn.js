@@ -95,7 +95,7 @@ const Login = ({ navigation }) => {
                     value={password}
                     onChangeText={setPassword}
                 />
-                <View style={styles.roleSelection}>
+                {/* <View style={styles.roleSelection}>
                     <TouchableOpacity
                         style={[styles.roleButton, role === 'Customer' && styles.selectedRoleButton]}
                         onPress={() => setRole('Customer')}
@@ -108,7 +108,7 @@ const Login = ({ navigation }) => {
                     >
                         <Text style={styles.roleButtonText}>Admin</Text>
                     </TouchableOpacity>
-                </View>
+                </View> */}
                 {isLoading ? (
                     <ActivityIndicator size="large" color={COLORS.primary} />
                 ) : (
@@ -121,7 +121,7 @@ const Login = ({ navigation }) => {
                 )}
                 <Button
                     title="Sign Up"
-                    onPress={() => navigation.navigate("Dashboard")}
+                    onPress={() => navigation.navigate("SignUp")}
                     style={styles.button}
                 />
             </View>

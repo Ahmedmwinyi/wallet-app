@@ -27,10 +27,10 @@ const MoreScreen = ({ navigation }) => {
             <Ionicons name="person-outline" size={24} color={COLORS.brown} />
             <Text style={styles.optionText}>My Profile</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('CardBankScreen')}>
+          {/* <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('CardBankScreen')}>
             <Ionicons name="card-outline" size={24} color={COLORS.brown} />
             <Text style={styles.optionText}>Cards & Bank Account</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('CustomerService')}>
             <Ionicons name="help-circle-outline" size={24} color={COLORS.brown} />
             <Text style={styles.optionText}>Customer Service</Text>

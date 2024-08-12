@@ -89,14 +89,14 @@ const HomeScreen = ({ navigation }) => {
           <Ionicons name="wallet-outline" size={24} color={COLORS.primary} />
           <Text style={styles.areaButtonText}>Bills</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.areaButton} onPress={() => navigation.navigate('Withdrawal')}>
+        {/* <TouchableOpacity style={styles.areaButton} onPress={() => navigation.navigate('Withdrawal')}>
           <Ionicons name="cash-outline" size={24} color={COLORS.primary} />
           <Text style={styles.areaButtonText}>Withdrawal</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.areaButton} onPress={() => navigation.navigate('Transfer')}>
           <Ionicons name="swap-horizontal-outline" size={24} color={COLORS.primary} />
           <Text style={styles.areaButtonText}>Transfer</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       {/* Footer */}
