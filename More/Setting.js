@@ -69,7 +69,7 @@ const SettingsScreen = () => {
                     <Ionicons name="log-out-outline" size={20} style={styles.icon} />
                     <Text style={styles.optionText}>Logout</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.option} onPress={() => {/* Add your delete account logic here */ }}>
+                <TouchableOpacity style={styles.option} onPress={() => navigation.navigate('DeleteAcconut')}>
                     <Ionicons name="trash-outline" size={20} style={styles.icon} />
                     <Text style={styles.optionText}>Delete Account</Text>
                 </TouchableOpacity>

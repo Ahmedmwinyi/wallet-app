@@ -120,7 +120,7 @@ const HomeScreen = ({ navigation }) => {
                       item.type === 'Transfer' ? styles.transferAmount :
                       item.type === 'Beneficiary Transaction' ? styles.transferAmount :
                       item.type === 'Bill Payment' ? styles.transferAmount :
-                      item.type === 'E-Wallet Transaction' ? styles.receivedAmount : styles.transferAmount,
+                      item.type === 'Credit' ? styles.receivedAmount : styles.transferAmount,
                     ]}
                   >
                     {item.amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}

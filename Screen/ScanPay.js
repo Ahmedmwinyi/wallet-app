@@ -192,11 +192,33 @@ const styles = StyleSheet.create({
     },
     scannerContainer: {
         flex: 1,
-        width: '60%',
-        left: 70,
+        width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative',
+        overflow: 'hidden',
+    },
+    cameraOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        borderWidth: 2,
+        borderColor: COLORS.primary,
+        borderRadius: 10,
+        elevation: 5,
+    },
+    scannerBox: {
+        width: '80%',
+        height: '60%',
+        borderColor: COLORS.primary,
+        borderWidth: 2,
+        borderRadius: 10,
+        overflow: 'hidden',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    scannerBoxOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        borderColor: 'rgba(0, 0, 0, 0.5)',
+        borderWidth: 2,
     },
     rescanButton: {
         backgroundColor: COLORS.primary,
@@ -206,6 +228,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         elevation: 3,
+        marginTop: 20,
     },
     rescanButtonText: {
         color: '#fff',
@@ -263,5 +286,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
 });
+
 
 export default ScanPay;

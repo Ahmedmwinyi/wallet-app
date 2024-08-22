@@ -115,7 +115,7 @@ export default function History() {
                 <Text style={styles.transactionLabel}>{item.receiver}</Text>
                 <Text style={styles.transactionDate}>{item.date}</Text>
               </View>
-              <Text style={[styles.transactionValue, item.type === 'Top-Up' ? styles.incomeValue : styles.expenseValue]}>
+              <Text style={[styles.transactionValue, item.type === 'Credit' ? styles.incomeValue : styles.expenseValue]}>
                 {item.amount}
               </Text>
             </TouchableOpacity>
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5'
   },
   list: {
-    marginStart: 14,
+    marginStart: 10,
     marginEnd: 14,
   },
   transactionItem: {

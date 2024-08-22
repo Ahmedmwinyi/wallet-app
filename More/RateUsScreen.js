@@ -7,7 +7,7 @@ const RateUsScreen = () => {
     // Function to open the app store for rating
     const openAppStore = () => {
        
-        const appStoreUrl = 'https://apps.apple.com/app/your_app_id';
+        const appStoreUrl = 'https://wa.me/+255776799666';
         Linking.openURL(appStoreUrl);
     };
 

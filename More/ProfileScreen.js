@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Feather } from '@expo/vector-icons';
 import { COLORS } from '../constants/theme';
 import axios from 'axios';
@@ -9,22 +8,35 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileScreen = () => {
     const navigation = useNavigation();
-    const [profileData, setProfileData] = useState({});
+    const [profileData, setProfileData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        country: '',
+       
+    });
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [editing, setEditing] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                const sessionKey = await AsyncStorage.getItem('sessionKey');
+                const mobileNumber = await AsyncStorage.getItem('mobileNumber');
+
+                if (!sessionKey || !mobileNumber) {
+                    Alert.alert('Error', 'Missing API key or mobile number');
+                    return;
+                }
+
                 const response = await axios.get('http://192.168.43.254:8088/customer/view', {
                     params: {
-                        key: '',
-                        mobileNumber: ''
+                        key: sessionKey,
+                        mobileNumber: mobileNumber
                     }
                 });
                 setProfileData(response.data);
             } catch (error) {
-                setError(error);
                 Alert.alert('Error', 'Failed to fetch profile data');
             } finally {
                 setLoading(false);
@@ -34,7 +46,50 @@ const ProfileScreen = () => {
         fetchData();
     }, []);
 
-    
+    const handleInputChange = (field, value) => {
+        setProfileData({ ...profileData, [field]: value });
+    };
+
+    const handleSave = async () => {
+        try {
+            setLoading(true);
+            const sessionKey = await AsyncStorage.getItem('sessionKey');
+            const mobileNumber = await AsyncStorage.getItem('mobileNumber');
+
+            if (!sessionKey || !mobileNumber) {
+                Alert.alert('Error', 'Missing API key or mobile number');
+                return;
+            }
+
+            // Adjust the request to include `key` and `mobileNumber` as query parameters
+            const response = await axios.put('http://192.168.43.254:8088/customer/update', profileData, {
+                params: {
+                    key: sessionKey,
+                    mobileNumber: mobileNumber
+                }
+            });
+
+            Alert.alert('Success', 'Profile updated successfully');
+            setEditing(false);
+        } catch (error) {
+            if (error.response) {
+                console.error('Response data:', error.response.data);
+                console.error('Response status:', error.response.status);
+                console.error('Response headers:', error.response.headers);
+                Alert.alert('Error', `Failed to update profile: ${error.response.data.error || 'Unknown error'}`);
+            } else if (error.request) {
+                console.error('Request data:', error.request);
+                Alert.alert('Error', 'No response from the server');
+            } else {
+                console.error('Error message:', error.message);
+                Alert.alert('Error', error.message);
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
 
     if (loading) {
         return (
@@ -44,8 +99,6 @@ const ProfileScreen = () => {
         );
     }
 
-    
-
     return (
         <ScrollView style={styles.container}>
             <View style={styles.header}>
@@ -53,44 +106,76 @@ const ProfileScreen = () => {
             </View>
             <Text style={styles.username}>{profileData.firstName} {profileData.lastName}</Text>
             <View style={styles.mobileNumber}>
-                <Text>{profileData.phoneNumber}</Text>
+                <Text>{profileData.mobileNumber}</Text>
             </View>
 
             <View style={styles.section}>
-                <TouchableOpacity style={styles.option}>
+                <View style={styles.option}>
                     <Text style={styles.label}>First Name:</Text>
-                    <Text style={styles.value}>{profileData.firstName}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.option}>
+                    {editing ? (
+                        <TextInput
+                            style={styles.input}
+                            value={profileData.firstName}
+                            onChangeText={(value) => handleInputChange('firstName', value)}
+                        />
+                    ) : (
+                        <Text style={styles.value}>{profileData.firstName}</Text>
+                    )}
+                </View>
+
+                <View style={styles.option}>
                     <Text style={styles.label}>Last Name:</Text>
-                    <Text style={styles.value}>{profileData.lastName}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.option}>
+                    {editing ? (
+                        <TextInput
+                            style={styles.input}
+                            value={profileData.lastName}
+                            onChangeText={(value) => handleInputChange('lastName', value)}
+                        />
+                    ) : (
+                        <Text style={styles.value}>{profileData.lastName}</Text>
+                    )}
+                </View>
+
+                <View style={styles.option}>
                     <Text style={styles.label}>Email:</Text>
-                    <Text style={styles.value}>{profileData.email}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.option}>
-                    <Text style={styles.label}>Country:</Text>
-                    <Text style={styles.value}>{profileData.country}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.option}>
-                    <Text style={styles.label}>State:</Text>
-                    <Text style={styles.value}>{profileData.state}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.option}>
-                    <Text style={styles.label}>City:</Text>
-                    <Text style={styles.value}>{profileData.city}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.option}>
-                    <Text style={styles.label}>Building Name:</Text>
-                    <Text style={styles.value}>{profileData.buildingName}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.option}>
-                    <Text style={styles.label}>Street Name:</Text>
-                    <Text style={styles.value}>{profileData.streetName}</Text>
-                </TouchableOpacity>
+                    {editing ? (
+                        <TextInput
+                            style={styles.input}
+                            value={profileData.email}
+                            onChangeText={(value) => handleInputChange('email', value)}
+                        />
+                    ) : (
+                        <Text style={styles.value}>{profileData.email}</Text>
+                    )}
+                </View>
+
+                <View style={styles.option}>
+                    <Text style={styles.label}>Wallet ID:</Text>
+                    {editing ? (
+                        <TextInput
+                            style={styles.input}
+                            value={profileData.wallet?.walletId || ''}
+                            onChangeText={(value) => handleInputChange('wallet', { ...profileData.wallet, walletId: value })}
+                        />
+                    ) : (
+                        <Text style={styles.value}>{profileData.wallet?.walletId || 'N/A'}</Text>
+                    )}
+                </View>
+            </View>
+
+            <View style={styles.footer}>
+                {editing ? (
+                    <TouchableOpacity style={styles.button} onPress={handleSave}>
+                        <Text style={styles.buttonText}>Save</Text>
+                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity style={styles.button} onPress={() => setEditing(true)}>
+                        <Text style={styles.buttonText}>Edit</Text>
+                    </TouchableOpacity>
+                )}
             </View>
         </ScrollView>
+
     );
 };
 
@@ -143,14 +228,6 @@ const styles = StyleSheet.create({
         shadowRadius: 2,
         elevation: 1,
     },
-    icon: {
-        marginRight: 10,
-        color: COLORS.brown,
-    },
-    optionText: {
-        fontSize: 16,
-        color: COLORS.brown,
-    },
     label: {
         fontSize: 16,
         color: COLORS.secondary1,
@@ -159,10 +236,34 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: COLORS.brown,
     },
+    input: {
+        borderBottomWidth: 1,
+        borderColor: COLORS.primary,
+        paddingVertical: 5,
+        fontSize: 16,
+        color: COLORS.brown,
+        width: '60%',
+        textAlign: 'right',
+    },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    footer: {
+        marginTop: 20,
+        alignItems: 'center',
+    },
+    button: {
+        backgroundColor: COLORS.primary,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     errorContainer: {
         flex: 1,

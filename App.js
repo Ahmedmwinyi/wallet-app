@@ -36,6 +36,7 @@ import ExchangeRateScreen from './More/ExchangeRateScreen';
 import RateUsScreen from './More/RateUsScreen';
 import BonusScreen from './More/BonusScreen';
 import LogoutScreen from './More/SettingScreen/LogoutScreen';
+import DeleteAcconut from './More/SettingScreen/DeleteAcconut';
 
 import Dashboard from './Admin/Dashboard';
 import Customer from './Admin/Dashboard/Customer';
@@ -85,6 +86,7 @@ export default function App() {
         <Stack.Screen name='RateUsScreen' component={RateUsScreen} />
         <Stack.Screen name='BonusScreen' component={BonusScreen} />
         <Stack.Screen name='LogoutScreen' component={LogoutScreen} />
+        <Stack.Screen name='DeleteAcconut' component={DeleteAcconut} />
         <Stack.Screen name='CustomerService' component={CustomerService} />
 
         <Stack.Screen name='Dashboard' component={Dashboard} />
